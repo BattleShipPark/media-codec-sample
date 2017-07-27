@@ -43,4 +43,8 @@ public class MainActivity extends Activity {
     public void onTranscoder(View view) {
         startActivity(new Intent(this, TranscoderActivity.class));
     }
+
+    public void onConcat(View view) {
+        startActivity(new Intent(this, ConcatActivity.class));
+    }
 }

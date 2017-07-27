@@ -88,7 +88,7 @@ public class TranscoderActivity extends Activity {
         boolean sawEOS = false;
         int bufferSize = MAX_SAMPLE_SIZE;
         int frameCount = 0;
-        int offset = 100;
+        int offset = 0;
 
         ByteBuffer dstBuf = ByteBuffer.allocate(bufferSize);
         MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();

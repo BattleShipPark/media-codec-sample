@@ -21,7 +21,8 @@
         </activity>
         <activity android:name=".CameraToMpegActivity" />
         <activity android:name=".DecoderActivity" />
-        <activity android:name=".TranscoderActivity"></activity>
+        <activity android:name=".TranscoderActivity"/>
+        <activity android:name=".ConcatActivity"/>
     </application>
 
 </manifest>
