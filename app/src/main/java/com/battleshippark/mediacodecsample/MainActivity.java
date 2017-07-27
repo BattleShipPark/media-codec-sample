@@ -22,14 +22,6 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void onCameraToMpeg(View view) {
-        startActivity(new Intent(this, CameraToMpegActivity.class));
-    }
-
-    public void onDecoder(View view) {
-        startActivity(new Intent(this, DecoderActivity.class));
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -38,5 +30,17 @@ public class MainActivity extends Activity {
                 finish();
             }
         }
+    }
+
+    public void onCameraToMpeg(View view) {
+        startActivity(new Intent(this, CameraToMpegActivity.class));
+    }
+
+    public void onDecoder(View view) {
+        startActivity(new Intent(this, DecoderActivity.class));
+    }
+
+    public void onTranscoder(View view) {
+        startActivity(new Intent(this, TranscoderActivity.class));
     }
 }
