@@ -36,8 +36,8 @@ public class MainActivity extends Activity {
         startActivity(new Intent(this, CameraToMpegActivity.class));
     }
 
-    public void onDecoder(View view) {
-        startActivity(new Intent(this, DecoderActivity.class));
+    public void onVideoToSurface(View view) {
+        startActivity(new Intent(this, VideoToSurfaceActivity.class));
     }
 
     public void onTranscoder(View view) {

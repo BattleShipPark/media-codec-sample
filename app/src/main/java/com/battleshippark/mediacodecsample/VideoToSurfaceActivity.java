@@ -6,14 +6,14 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class DecoderActivity extends Activity implements SurfaceHolder.Callback {
+public class VideoToSurfaceActivity extends Activity implements SurfaceHolder.Callback {
     private static final String FILE_PATH = "dizzy.mp4";
     private VideoDecoderThread mVideoDecoder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_decoder);
+        setContentView(R.layout.activity_video_to_surface);
 
         ((SurfaceView) findViewById(R.id.surface_view)).getHolder().addCallback(this);
 
