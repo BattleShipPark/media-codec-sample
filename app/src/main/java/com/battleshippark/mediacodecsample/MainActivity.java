@@ -8,6 +8,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
+import com.battleshippark.mediacodecsample.ImageToSurfaceToVideo.ImageToSurfaceToVideoActivity;
+
 public class MainActivity extends Activity {
 
     @Override
@@ -50,5 +52,9 @@ public class MainActivity extends Activity {
 
     public void onImageToVideo(View view) {
         startActivity(new Intent(this, ImageToVideoActivity.class));
+    }
+
+    public void onImageToSurfaceToVideo(View view) {
+        startActivity(new Intent(this, ImageToSurfaceToVideoActivity.class));
     }
 }

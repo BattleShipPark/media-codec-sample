@@ -41,6 +41,7 @@ public class ImageToVideoActivity extends Activity {
         setContentView(R.layout.activity_image_to_video);
 
         textview = (TextView) findViewById(R.id.textView);
+        setText("prepare");
 
         width = 540;
         height = 960;
@@ -55,7 +56,6 @@ public class ImageToVideoActivity extends Activity {
 
     private void encode() {
         try {
-            setText("prepare");
             prepare();
 
             setText("encode");

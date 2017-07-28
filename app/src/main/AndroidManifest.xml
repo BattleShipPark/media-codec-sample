@@ -24,6 +24,7 @@
         <activity android:name=".TranscoderActivity" />
         <activity android:name=".ConcatActivity" />
         <activity android:name=".ImageToVideoActivity" />
+        <activity android:name=".ImageToSurfaceToVideo.ImageToSurfaceToVideoActivity" />
     </application>
 
 </manifest>
