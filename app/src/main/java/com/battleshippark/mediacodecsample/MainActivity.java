@@ -47,4 +47,8 @@ public class MainActivity extends Activity {
     public void onConcat(View view) {
         startActivity(new Intent(this, ConcatActivity.class));
     }
+
+    public void onImageToVideo(View view) {
+        startActivity(new Intent(this, ImageToVideoActivity.class));
+    }
 }
