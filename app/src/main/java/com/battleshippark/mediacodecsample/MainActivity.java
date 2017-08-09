@@ -57,4 +57,8 @@ public class MainActivity extends Activity {
     public void onImageToSurfaceToVideo(View view) {
         startActivity(new Intent(this, ImageToSurfaceToVideoActivity.class));
     }
+
+    public void onMixVideoAudio(View view) {
+        startActivity(new Intent(this, MixVideoAudioActivity.class));
+    }
 }
