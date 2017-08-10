@@ -58,6 +58,10 @@ public class MainActivity extends Activity {
         startActivity(new Intent(this, ImageToSurfaceToVideoActivity.class));
     }
 
+    public void onMP3ToAAC(View view) {
+        startActivity(new Intent(this, MP3ToAACActivity.class));
+    }
+
     public void onMixVideoAudio(View view) {
         startActivity(new Intent(this, MixVideoAudioActivity.class));
     }

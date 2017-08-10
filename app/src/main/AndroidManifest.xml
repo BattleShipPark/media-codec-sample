@@ -25,7 +25,8 @@
         <activity android:name=".ConcatActivity" />
         <activity android:name=".ImageToVideoActivity" />
         <activity android:name=".ImageToSurfaceToVideo.ImageToSurfaceToVideoActivity" />
-        <activity android:name=".MixVideoAudioActivity"></activity>
+        <activity android:name=".MP3ToAACActivity" />
+        <activity android:name=".MixVideoAudioActivity" />
     </application>
 
 </manifest>
