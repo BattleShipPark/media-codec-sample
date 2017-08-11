@@ -22,7 +22,6 @@ public class MP3ToAACActivity extends Activity {
     private static final String OUTPUT_AUDIO_MIME_TYPE = "audio/mp4a-latm";
     private static final int MAX_SAMPLE_SIZE = 16 * 1024;
     private MediaExtractor extractor;
-    private MediaFormat decoderFormat, encoderFormat;
     private MediaCodec decoder, encoder;
     private MediaMuxer muxer;
     private int trackIndex;
@@ -61,32 +60,26 @@ public class MP3ToAACActivity extends Activity {
         extractor = new MediaExtractor();
         AssetFileDescriptor srcFd = getResources().openRawResourceFd(R.raw.mp3_medium);
         extractor.setDataSource(srcFd.getFileDescriptor(), srcFd.getStartOffset(), srcFd.getLength());
-        MediaFormat inputFormat = null;
+        int sampleRate = -1, channelCount = -1;
         for (int i = 0; i < extractor.getTrackCount(); i++) {
-            inputFormat = extractor.getTrackFormat(i);
+            MediaFormat inputFormat = extractor.getTrackFormat(i);
             String mime = inputFormat.getString(MediaFormat.KEY_MIME);
             if (mime.startsWith("audio/")) {
                 extractor.selectTrack(i);
+                sampleRate = inputFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE);
+                channelCount = inputFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT);
+                break;
             }
         }
 
-        decoderFormat = MediaFormat.createAudioFormat(INPUT_AUDIO_MIME_TYPE,
-                inputFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE),
-                inputFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT)
-        );
-        decoderFormat.setInteger(MediaFormat.KEY_BIT_RATE, inputFormat.getInteger("bit-rate"));
-        decoderFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, MAX_SAMPLE_SIZE);
-
+        MediaFormat decoderFormat = MediaFormat.createAudioFormat(INPUT_AUDIO_MIME_TYPE, sampleRate, channelCount);
         decoder = MediaCodec.createDecoderByType(INPUT_AUDIO_MIME_TYPE);
         decoder.configure(decoderFormat, null, null, 0);
         decoder.start();
 
-        encoderFormat = MediaFormat.createAudioFormat(OUTPUT_AUDIO_MIME_TYPE,
-                inputFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE),
-                inputFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT)
-        );
+        MediaFormat encoderFormat = MediaFormat.createAudioFormat(OUTPUT_AUDIO_MIME_TYPE, sampleRate, channelCount);
         encoderFormat.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
-        encoderFormat.setInteger(MediaFormat.KEY_BIT_RATE, inputFormat.getInteger("bit-rate"));
+        encoderFormat.setInteger(MediaFormat.KEY_BIT_RATE, 128000);
         encoderFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, MAX_SAMPLE_SIZE);
 
         encoder = MediaCodec.createEncoderByType(OUTPUT_AUDIO_MIME_TYPE);
@@ -101,7 +94,8 @@ public class MP3ToAACActivity extends Activity {
         }
     }
 
-    int decodeCount, encodeCount, muxCount;
+    int decodeCount, encodeCount, muxCount = -1;
+
     private boolean decode() {
         int inputIndex = decoder.dequeueInputBuffer(1000);
         if (inputIndex >= 0) {
@@ -111,7 +105,7 @@ public class MP3ToAACActivity extends Activity {
             if (extractor.advance() && sampleSize > 0) {
                 decoder.queueInputBuffer(inputIndex, 0, sampleSize, extractor.getSampleTime(), 0);
                 dstBuf.clear();
-                Log.d(TAG, String.format("Decode InputBuffer: size=%d, count=%d in %d" , sampleSize, decodeCount++, extractor.getSampleTime()));
+                Log.d(TAG, String.format("Decode InputBuffer: size=%d, count=%d in %d", sampleSize, decodeCount++, extractor.getSampleTime()));
             } else {
                 Log.d(TAG, "Decode InputBuffer BUFFER_FLAG_END_OF_STREAM");
                 decoder.queueInputBuffer(inputIndex, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
@@ -123,7 +117,7 @@ public class MP3ToAACActivity extends Activity {
 
     private boolean encode() {
         MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
-        int outputIndex = decoder.dequeueOutputBuffer(info, 1000);
+        int outputIndex = decoder.dequeueOutputBuffer(info, 100);
         if (outputIndex < 0) {
             Log.d(TAG, "Decode OutputBuffer error " + outputIndex);
         } else {
@@ -160,7 +154,7 @@ public class MP3ToAACActivity extends Activity {
 
     private boolean mux() {
         MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
-        int outputIndex = encoder.dequeueOutputBuffer(info, 1000);
+        int outputIndex = encoder.dequeueOutputBuffer(info, 100);
         if (outputIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
             MediaFormat newFormat = encoder.getOutputFormat();
             trackIndex = muxer.addTrack(newFormat);
