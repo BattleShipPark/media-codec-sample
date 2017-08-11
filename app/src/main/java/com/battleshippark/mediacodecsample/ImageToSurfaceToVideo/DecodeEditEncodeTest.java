@@ -16,7 +16,6 @@
 
 package com.battleshippark.mediacodecsample.ImageToSurfaceToVideo;
 
-import android.content.Context;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;

@@ -1,9 +1,5 @@
 package com.battleshippark.mediacodecsample;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
-
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaCodec;
 import android.media.MediaCodec.BufferInfo;
@@ -11,6 +7,9 @@ import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.util.Log;
 import android.view.Surface;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 
 public class VideoDecoderThread extends Thread {

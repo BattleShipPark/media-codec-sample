@@ -2,11 +2,9 @@ package com.battleshippark.mediacodecsample;
 
 import android.app.Activity;
 import android.content.res.AssetFileDescriptor;
-import android.content.res.Resources;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
-import android.media.MediaMetadataRetriever;
 import android.media.MediaMuxer;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,11 +18,6 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
 
 public class ConcatActivity extends Activity {
     private static final String TAG = "ConcatActivity";
