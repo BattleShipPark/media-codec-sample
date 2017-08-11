@@ -8,7 +8,6 @@ import android.media.MediaFormat;
 import android.media.MediaMuxer;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.widget.TextView;
 
 import java.io.File;
@@ -72,7 +71,7 @@ public class MixVideoAudioActivity extends Activity {
         videoExtractor = new MediaExtractor();
         videoExtractor.setDataSource(videoFd.getFileDescriptor(), videoFd.getStartOffset(), videoFd.getLength());
 
-        audioFd = getResources().openRawResourceFd(R.raw.bg);
+        audioFd = getResources().openRawResourceFd(R.raw.mp3_short);
         audioExtractor = new MediaExtractor();
         audioExtractor.setDataSource(audioFd.getFileDescriptor(), audioFd.getStartOffset(), audioFd.getLength());
 

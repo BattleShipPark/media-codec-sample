@@ -59,7 +59,7 @@ public class MP3ToAACActivity extends Activity {
 
     private void prepare() throws IOException {
         extractor = new MediaExtractor();
-        AssetFileDescriptor srcFd = getResources().openRawResourceFd(R.raw.bg);
+        AssetFileDescriptor srcFd = getResources().openRawResourceFd(R.raw.mp3_medium);
         extractor.setDataSource(srcFd.getFileDescriptor(), srcFd.getStartOffset(), srcFd.getLength());
         MediaFormat inputFormat = null;
         for (int i = 0; i < extractor.getTrackCount(); i++) {
@@ -70,8 +70,10 @@ public class MP3ToAACActivity extends Activity {
             }
         }
 
-        decoderFormat = MediaFormat.createAudioFormat(INPUT_AUDIO_MIME_TYPE, inputFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE), 1);
-        decoderFormat.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
+        decoderFormat = MediaFormat.createAudioFormat(INPUT_AUDIO_MIME_TYPE,
+                inputFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE),
+                inputFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT)
+        );
         decoderFormat.setInteger(MediaFormat.KEY_BIT_RATE, inputFormat.getInteger("bit-rate"));
         decoderFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, MAX_SAMPLE_SIZE);
 
@@ -80,7 +82,9 @@ public class MP3ToAACActivity extends Activity {
         decoder.start();
 
         encoderFormat = MediaFormat.createAudioFormat(OUTPUT_AUDIO_MIME_TYPE,
-                inputFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE), 1);
+                inputFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE),
+                inputFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT)
+        );
         encoderFormat.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
         encoderFormat.setInteger(MediaFormat.KEY_BIT_RATE, inputFormat.getInteger("bit-rate"));
         encoderFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, MAX_SAMPLE_SIZE);
@@ -97,6 +101,7 @@ public class MP3ToAACActivity extends Activity {
         }
     }
 
+    int decodeCount, encodeCount, muxCount;
     private boolean decode() {
         int inputIndex = decoder.dequeueInputBuffer(1000);
         if (inputIndex >= 0) {
@@ -105,7 +110,8 @@ public class MP3ToAACActivity extends Activity {
 
             if (extractor.advance() && sampleSize > 0) {
                 decoder.queueInputBuffer(inputIndex, 0, sampleSize, extractor.getSampleTime(), 0);
-                Log.d(TAG, "Decode InputBuffer " + sampleSize + " in " + extractor.getSampleTime());
+                dstBuf.clear();
+                Log.d(TAG, String.format("Decode InputBuffer: size=%d, count=%d in %d" , sampleSize, decodeCount++, extractor.getSampleTime()));
             } else {
                 Log.d(TAG, "Decode InputBuffer BUFFER_FLAG_END_OF_STREAM");
                 decoder.queueInputBuffer(inputIndex, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
@@ -124,6 +130,7 @@ public class MP3ToAACActivity extends Activity {
             if ((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) == 0) {
                 ByteBuffer decodedData = decoder.getOutputBuffer(outputIndex);
                 encode(decodedData, info.presentationTimeUs);
+                decodedData.clear();
                 decoder.releaseOutputBuffer(outputIndex, false);
                 Log.d(TAG, "Decode OutputBuffer release " + decodedData.limit() + " in " + info.presentationTimeUs);
             } else {
@@ -146,7 +153,7 @@ public class MP3ToAACActivity extends Activity {
                 dstBuf.put(decodedData);
 
                 encoder.queueInputBuffer(inputIndex, 0, dstBuf.position(), presentationTimeUs, 0);
-                Log.d(TAG, "Encode InputBuffer " + dstBuf.limit() + " in " + presentationTimeUs);
+                Log.d(TAG, String.format("Encode InputBuffer: size=%d, count=%d in %d", dstBuf.position(), encodeCount++, presentationTimeUs));
             }
         }
     }
@@ -167,7 +174,7 @@ public class MP3ToAACActivity extends Activity {
                     Log.d(TAG, "Encode OutputBuffer release " + info.presentationTimeUs + " after " + lastPresentationTimeUs);
                 } else {
                     muxer.writeSampleData(trackIndex, encodedData, info);
-                    Log.d(TAG, "Encode OutputBuffer release " + encodedData.limit() + " in " + info.presentationTimeUs);
+                    Log.d(TAG, String.format("Encode OutputBuffer: size=%d, count=%d in %d", encodedData.limit(), muxCount++, info.presentationTimeUs));
                     lastPresentationTimeUs = info.presentationTimeUs;
                 }
                 encoder.releaseOutputBuffer(outputIndex, false);
