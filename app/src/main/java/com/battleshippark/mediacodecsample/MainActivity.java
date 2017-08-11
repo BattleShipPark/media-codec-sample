@@ -58,6 +58,10 @@ public class MainActivity extends Activity {
         startActivity(new Intent(this, ImageToSurfaceToVideoActivity.class));
     }
 
+    public void onDecodePlayAac(View view) {
+        new AudioDecoderThread().startPlay(this, R.raw.aac);
+    }
+
     public void onMP3ToAAC(View view) {
         startActivity(new Intent(this, MP3ToAACActivity.class));
     }
